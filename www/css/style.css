@@ -212,3 +212,17 @@ ul.pager li a.onpage {
 ul.pager li a:hover {
 	background-color: #ccf;
 }
+
+table.editable form {
+	margin-top: 12px;
+}
+
+table.editable form input.update {
+	background-color: #9f9;
+}
+table.editable form input.cancel {
+	background-color: #ff9;
+}
+table.editable form input.del {
+	background-color: #f99;
+}

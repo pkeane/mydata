@@ -40,9 +40,28 @@ class Dase_Handler_Data extends Dase_Handler
 				}
 				$obj = new $class($this->db);
 				$obj->load($r->get('id'));
+
 				$obj->$att = $r->get('value');
+				if (!$obj->$att) {
+						$r->renderResponse('no change');
+				}
 				$obj->update();
 				$r->renderResponse('updated');
+		}
+
+		public function deleteValue($r)
+		{
+				$att = $r->get('att');
+				$class = 'Dase_DBO_'.Dase_Util::camelize($r->get('table'));
+				if (!class_exists($class)) {
+						$r->renderError(404);
+				}
+				$obj = new $class($this->db);
+				$obj->load($r->get('id'));
+
+				$obj->$att = '';
+				$obj->update();
+				$r->renderResponse('deleted');
 		}
 
 		public function getSimpleForm($r)
@@ -76,9 +95,16 @@ class Dase_Handler_Data extends Dase_Handler
 				$obj->load($r->get('id'));
 				$obj->inflate();
 				$attobj = $obj->$att;
+				if ($attobj) {
+						$t->assign('value',$attobj->id);
+				} else {
+						$t->assign('value','');
+				}
+				$t->assign('id',$r->get('id'));
+				$t->assign('att',$att);
+				$t->assign('table',$r->get('table'));
 				$attclass = Dase_DBO::getDBOClass($att);
 				$attobjs = new $attclass($this->db);
-				$t->assign('attobj',$attobj);
 				$t->assign('attobjs',$attobjs->findAll());
 				$r->renderResponse($t->fetch('one_form.tpl'));
 

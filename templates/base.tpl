@@ -12,7 +12,7 @@
 		{block name="head-links"}{/block}
 
 		{block name="head-js"}
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
 		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>
 		<!--
 		<script src="www/js/jquery.js"></script>

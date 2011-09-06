@@ -17,7 +17,7 @@ Dase.activateEditing = function() {
 		var url = $(this).attr('href');
 		$.get(url, function(data) {
 			td.html(data);
-			td.find('form').submit(function() {
+			td.find('form[method="post"]').submit(function() {
 				var row = $(this).parents('tr');
 				var row_url = row.find('td.control a').attr('href')+'/rowdata';
 				var post_url = $(this).attr('action');
@@ -29,6 +29,37 @@ Dase.activateEditing = function() {
 				});
 				return false;
 			});
+			/* cancel form: */
+			td.find('form[method="get"]').submit(function() {
+				var row = $(this).parents('tr');
+				var row_url = row.find('td.control a').attr('href')+'/rowdata';
+				$.get(row_url,function(rowdata) {
+					row.html(rowdata);
+					Dase.activateEditing();
+				});
+				return false;
+			});
+			/* delete form: */
+			td.find('form[method="delete"]').submit(function() {
+				var row = $(this).parents('tr');
+				var row_url = row.find('td.control a').attr('href')+'/rowdata';
+				var delete_url = $(this).attr('action');
+				if (confirm('delete this value?')) { 
+					$.ajax({
+						type: "DELETE",
+						url: delete_url,
+						data: "",
+						success: function(msg){
+							$.get(row_url,function(rowdata) {
+								row.html(rowdata);
+								Dase.activateEditing();
+							});
+						}
+					});
+				} else {
+				}
+				return false;
+			});
 		});
 		return false;
 	});
@@ -38,7 +69,7 @@ Dase.activateEditing = function() {
 		var url = $(this).attr('href');
 		$.get(url, function(data) {
 			td.html(data);
-			td.find('form').submit(function() {
+			td.find('form[method="post"]').submit(function() {
 				var row = $(this).parents('tr');
 				var row_url = row.find('td.control a').attr('href')+'/rowdata';
 				var post_url = $(this).attr('action');
@@ -47,6 +78,16 @@ Dase.activateEditing = function() {
 						row.html(rowdata);
 						Dase.activateEditing();
 					});
+				});
+				return false;
+			});
+			/* cancel form: */
+			td.find('form[method="get"]').submit(function() {
+				var row = $(this).parents('tr');
+				var row_url = row.find('td.control a').attr('href')+'/rowdata';
+				$.get(row_url,function(rowdata) {
+					row.html(rowdata);
+					Dase.activateEditing();
 				});
 				return false;
 			});

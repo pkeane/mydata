@@ -1,0 +1,214 @@
+body {
+	font-family: "Georgia", serif;
+	background-color: #fff;
+}
+
+p {
+	margin: 10px 0;
+}
+
+
+div#container {
+	margin: 0px 20px;
+
+}
+
+div#header {
+	background-color: #fff;
+	color: #000;
+	margin: 0px;
+	padding: 0px;
+	/*
+	border: 1px solid #666;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	*/
+
+}
+
+h1, h2, h3, h4 {
+	font-family: Georgia, serif;
+}
+
+h3.msg {
+	color: #900;
+	margin: 10px 0 0 0;
+}
+
+div#header h1 {
+	font-size: 60px;
+	font-weight: normal;
+	float: left;
+}
+
+div#header h4 {
+	font-weight: normal;
+	float: right;
+	margin-right: 6px;
+	margin-top: 10px;
+}
+
+div#header a.delete {
+	color:#c00;
+}
+
+div#main {
+	margin: 5px;
+	background-color: #fff;
+	/*
+	border: 1px solid #ccc;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 15px 20px;
+	*/
+}
+
+#footer {
+	margin: 16px 0;
+} 
+
+#footer div.brand {
+	font-family: Arial, sans-serif;
+	padding: 10px 10px 10px 120px;
+	color: #999;
+	background-color: #ccc;
+	height: 40px;
+	vertical-align: bottom;
+	border: 1px solid #ccc;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	padding: 15px 15px 15px 15px;
+}
+#footer a {
+	color:#666;
+}
+#footer table.logo {
+	float: left;
+	margin: 4px 2px 0 0;
+	border-spacing:1px;
+}
+#footer table.logo td {
+	padding: 0;
+	width: 5px;
+	height: 5px;
+	line-height: 5px;
+	font-size: 5px;
+	background-color: #777;
+}
+
+#footer div.label {
+	letter-spacing: -1px;
+	padding: 0;
+	font-size: 32px;
+	line-height: 40px;
+}
+#footer div.label strong {
+	font-size: 40px;
+}
+
+ul {
+	margin: 10px 0;
+}
+
+li  {
+	margin: 5px 0;
+}
+
+
+input.delete {
+	float: right;
+	margin-right: 0px;
+}
+
+input.delete:hover {
+	background-color: #c00;
+	color: #fff;
+}
+
+div.controls {
+	float: right;
+	margin: 6px 0;
+}
+
+dl {
+	margin: 10px 0;
+}
+dt {
+	background-color: #eee;
+	width: 140px; 
+	text-align: right; 
+	font-weight: bold; 
+	padding: 2px 10px;
+	margin-bottom: 2px;
+	color: #666; 
+}
+dd { 
+	margin: 0 0 2px 160px; 
+	padding: 2px 10px; 
+	min-height: 20px;
+}
+
+
+table.editable {
+	width: 100%;
+	border-collapse: collapse;
+}
+table.editable th {
+	width: 120px;
+	padding: 3px;
+	border: 1px solid #999;
+	background-color: #ddd;
+}
+table.editable td {
+	width: 120px;
+	padding: 3px;
+	border: 1px solid #999;
+}
+
+table.editable th.control {
+	width: 60px;
+	padding: 3px;
+	border: 1px solid #999;
+}
+
+table.editable td.control {
+	width: 60px;
+	padding: 3px;
+	border: 1px solid #999;
+}
+
+a.edit {
+	color: #c00;
+	font-size: 10px;
+}
+a.delete {
+	color: #c00;
+	font-size: 10px;
+}
+a.add {
+	color: #00c;
+	font-size: 10px;
+}
+
+ul.pager li {
+	float: left;
+	margin-left: 3px;
+}
+
+ul.pager li a {
+	font-family: verdana;
+	color: #00c;
+	font-weight: bold;
+	padding: 0 15px;
+	background-color: #eee;
+}
+
+ul.pager li a.onpage {
+	background-color: #ccd;
+}
+ul.pager li a:hover {
+	background-color: #ccf;
+}

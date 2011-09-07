@@ -29,7 +29,7 @@
 		</li>
 		{/foreach}
 	</ul>
-	<a href="data/language/{$lang->id}/edit/name" class="add">[add]</a>
+	<a href="data/{$table}/{$item->id}/edit/{$attname}/many_form" class="add">[add]</a>
 </td>
 {/if}
 {/foreach}

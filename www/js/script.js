@@ -95,8 +95,28 @@ Dase.activateEditing = function() {
 		return false;
 	});
 	$('table').find('a.delete').click(function() {
-		alert($(this).attr('href')+' edit');
-		alert($(this).parents('td').attr('class'));
+		var row = $(this).parents('tr');
+		var row_url = row.find('td.control a').attr('href')+'/rowdata';
+		if (confirm('are you sure?')) {
+			var del_o = {
+				'url': $(this).attr('href'),
+				'type':'DELETE',
+				'success': function(resp) {
+					$.get(row_url,function(rowdata) {
+						row.html(rowdata);
+						Dase.activateEditing();
+					});
+				},
+				'error': function() {
+					alert('sorry, cannot delete');
+					$.get(row_url,function(rowdata) {
+						row.html(rowdata);
+						Dase.activateEditing();
+					});
+				}
+			};
+			$.ajax(del_o);
+		}
 		return false;
 	});
 };

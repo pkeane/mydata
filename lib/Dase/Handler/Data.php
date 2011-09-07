@@ -8,6 +8,7 @@ class Dase_Handler_Data extends Dase_Handler
 				'{table}/{id}/{att}' => 'value',
 				'{table}/{id}/edit/{att}/simple_form' => 'simple_form',
 				'{table}/{id}/edit/{att}/one_form' => 'one_form',
+				'{table}/{id}/edit/{att}/many_form' => 'many_form',
 		);
 
 		protected function setup($r)
@@ -107,7 +108,24 @@ class Dase_Handler_Data extends Dase_Handler
 				$attobjs = new $attclass($this->db);
 				$t->assign('attobjs',$attobjs->findAll());
 				$r->renderResponse($t->fetch('one_form.tpl'));
+		}
 
+		public function getManyForm($r)
+		{
+				$t = new Dase_Template($r);
+				$att = $r->get('att');
+				$class = 'Dase_DBO_'.Dase_Util::camelize($r->get('table'));
+				if (!class_exists($class)) {
+						$r->renderError(404);
+				}
+				$obj = new $class($this->db);
+				$obj->load($r->get('id'));
+				$obj->inflate();
+				$t->assign('item',$obj);
+				$t->assign('id',$r->get('id'));
+				$t->assign('att',$att);
+				$t->assign('table',$r->get('table'));
+				$r->renderResponse($t->fetch('many_form.tpl'));
 		}
 
 		public function getList($r) 

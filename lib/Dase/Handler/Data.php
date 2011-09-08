@@ -6,6 +6,7 @@ class Dase_Handler_Data extends Dase_Handler
 				'{table}/list' => 'list',
 				'{table}/{id}/rowdata' => 'rowdata',
 				'{table}/{id}/{att}' => 'value',
+				'{table}/{id}/link/{att}/{att_id}' => 'link',
 				'{table}/{id}/edit/{att}/simple_form' => 'simple_form',
 				'{table}/{id}/edit/{att}/one_form' => 'one_form',
 				'{table}/{id}/edit/{att}/many_form' => 'many_form',
@@ -14,6 +15,22 @@ class Dase_Handler_Data extends Dase_Handler
 		protected function setup($r)
 		{
 				$this->user = $r->getUser();
+		}
+
+		public function deleteLink($r)
+		{
+				$class = 'Dase_DBO_'.Dase_Util::camelize($r->get('table'));
+				if (!class_exists($class)) {
+						$r->renderError(404);
+				}
+				$attclass = 'Dase_DBO_'.Dase_Util::camelize(rtrim($r->get('att'),'s'));
+				if (!class_exists($attclass)) {
+						$r->renderError(404);
+				}
+				$attobj = new $attclass($this->db);
+				$attobj->load($r->get('att_id'));
+				$attobj->delete();
+				$r->renderResponse('deleted');
 		}
 
 		public function getRowdata($r)
@@ -34,7 +51,10 @@ class Dase_Handler_Data extends Dase_Handler
 
 		public function postToValue($r)
 		{
+				//att to be set
 				$att = $r->get('att');
+
+				//this class
 				$class = 'Dase_DBO_'.Dase_Util::camelize($r->get('table'));
 				if (!class_exists($class)) {
 						$r->renderError(404);
@@ -42,7 +62,9 @@ class Dase_Handler_Data extends Dase_Handler
 				$obj = new $class($this->db);
 				$obj->load($r->get('id'));
 
-				$obj->$att = $r->get('value');
+				//if simple, it'll be a value
+				//if one, it'll be a foreign key
+				$obj->set($att,$r->get('value'));
 				if (!$obj->$att) {
 						$r->renderResponse('no change');
 				}
@@ -143,18 +165,77 @@ class Dase_Handler_Data extends Dase_Handler
 				if (!class_exists($class)) {
 						$r->renderError(404);
 				}
+
+				$attributes = array();
+				$check_obj = new $class($this->db);
+				$check_obj->inflate();
+				$attributes = $check_obj->attributes;
+				$filters = array();
+				foreach ($attributes as $k => $v) {
+						if ('one' == $v) {
+								$attclass = 'Dase_DBO_'.Dase_Util::camelize(rtrim($k,'s'));
+								if (class_exists($attclass)) {
+										$attobj = new $attclass($this->db);
+										$filters[rtrim($k,'s')] = $attobj->findAll(1);
+								}
+						}
+				}
+
 				$t = new Dase_Template($r);
 				$objs = new $class($this->db);
+
+				$_filters = array();
+				foreach ($filters as $k => $v) {
+						if ($r->get($k)) {
+								$att_id = $k.'_id';
+								$objs->$att_id = $r->get($k);
+								$_filters[$k] = $r->get($k);
+						}
+				}
+				$t->assign('_filters',$_filters);
+
 				if ($r->get('sort')) {
 						$objs->orderBy($r->get('sort'));
 						$t->assign('sort',$r->get('sort'));
 				}
+
+				$fsort_map = array();
+				if ($r->get('fsort')) {
+						$fsort_class = 'Dase_DBO_'.Dase_Util::camelize($r->get('fsort'));
+						if (class_exists($fsort_class)) {
+								$fsort_objs = new $fsort_class($this->db);
+								$fsort_objs->orderBy($fsort_objs->getNameField());
+								$i = 0;
+								foreach ($fsort_objs->find() as $fsort_obj) {
+										$i++;
+										$fsort_map[$fsort_obj->id] = $i;
+								}
+						}
+				}
+
+				$fullset = array();
+				foreach ($objs->find() as $obj) {
+						$obj = clone($obj);
+						if ($r->get('fsort')) {
+								$fid_field = $r->get('fsort').'_id';
+								$fkey = $obj->$fid_field;
+								if ($fkey) {
+										$obj->sort_key = $fsort_map[$fkey];
+								}
+						}
+						$fullset[] = $obj;
+				}
+
+				if ($r->get('fsort')) {
+						usort($fullset, array($class, "compare"));
+						$t->assign('fsort',$r->get('fsort'));
+				}
+
 				$set = array();
 				$i = 0;
 				$skips = 0;
 
-				$attributes = array();
-				foreach ($objs->find() as $obj) {
+				foreach ($fullset as $obj) {
 						$i++;
 						if ($start && $i < $start) {
 								$skips++;
@@ -163,15 +244,12 @@ class Dase_Handler_Data extends Dase_Handler
 						if ($max && $i > $max+$skips) {
 								continue;
 						}
-						$obj = clone($obj);
 						$obj->inflate();
-						//use one and only one inflated object to get class atts
-						if (count($obj->attributes) && !count($attributes)) {
-								$attributes = $obj->attributes;
-						}
 						$set[] = $obj;
 				}
+
 				$t->assign('attributes',$attributes);
+				$t->assign('filters',$filters);
 				$pages = array();
 				if ($max) {
 						$num_pages = floor($i/$max);

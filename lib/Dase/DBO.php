@@ -8,6 +8,7 @@ class Dase_DBO implements IteratorAggregate
 	private $fields = array(); 
 	private $table;
 	protected $limit;
+	public $sort_key; //for runtime foreign obj sort
 	protected $order_by;
 	protected $qualifiers = array();
 	public $attributes = array();
@@ -33,6 +34,18 @@ class Dase_DBO implements IteratorAggregate
 			return 'Dase_DBO_'.Dase_Util::camelize($table);
 	}
 
+
+	/* This is the static comparing function: */
+	static function compare($a, $b)
+	{
+			$al = strtolower($a->sort_key);
+			$bl = strtolower($b->sort_key);
+			if ($al == $bl) {
+					return 0;
+			}
+			return ($al > $bl) ? +1 : -1;
+	}
+
 	public function getName()
 	{
 			if ($this->title) {
@@ -46,7 +59,33 @@ class Dase_DBO implements IteratorAggregate
 			}
 	}
 
-	public function inflate() 
+	public function getNameField()
+	{
+			if ($this->hasMember('name')) {
+					return 'name';
+			}
+			if ($this->hasMember('title')) {
+					return 'title';
+			}
+			if ($this->hasMember('text')) {
+					return 'text';
+			}
+	}
+
+	public function setName($val)
+	{
+			if ($this->hasMember('name')) {
+					return $this->name = $val;
+			}
+			if ($this->hasMember('title')) {
+					return $this->title = $val;
+			}
+			if ($this->hasMember('text')) {
+					return $this->text = $val;
+			}
+	}
+
+	public function inflate($foreign_sort_key='') 
 	{
 			foreach ($this->getFieldNames() as $field) {
 					if ('_id' != substr($field,-3)) {
@@ -76,6 +115,9 @@ class Dase_DBO implements IteratorAggregate
 									$obj = new $class($this->db);
 									$obj->load($this->$id_field);
 									$this->$k = $obj;
+									if ($foreign_sort_key == $k) {
+											$this->sort_key = $obj->name;
+									}
 							}
 					}
 			}
@@ -106,9 +148,9 @@ class Dase_DBO implements IteratorAggregate
 		if ( array_key_exists( $key, $this->fields ) ) {
 			return $this->fields[ $key ];
 		}
-		//automatically call accessor method is it exists
+		//automatically call accessor method if it exists
 		$classname = get_class($this);
-		$method = 'get'.ucfirst($key);
+		$method = 'get'.Dase_Util::camelize($key);
 		if (method_exists($classname,$method)) {
 			return $this->{$method}();
 		}	
@@ -120,6 +162,26 @@ class Dase_DBO implements IteratorAggregate
 			$this->fields[ $key ] = $value;
 			return true;
 		}
+		$classname = get_class($this);
+		$method = 'set'.Dase_Util::camelize($key);
+		if (method_exists($classname,$method)) {
+			return $this->{$method}($value);
+		}	
+		return false;
+	}
+
+	//magic __set does not seem to work w/ variable variables, thus this
+	public function set( $key, $value )
+	{
+		if ( array_key_exists( $key, $this->fields ) ) {
+			$this->fields[ $key ] = $value;
+			return true;
+		}
+		$classname = get_class($this);
+		$method = 'set'.Dase_Util::camelize($key);
+		if (method_exists($classname,$method)) {
+			return $this->{$method}($value);
+		}	
 		return false;
 	}
 

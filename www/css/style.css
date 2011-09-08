@@ -168,6 +168,10 @@ table.editable td {
 	border: 1px solid #999;
 }
 
+table.editable th.sorted {
+	background-color: #ccf;
+}
+
 table.editable th.control {
 	width: 60px;
 	padding: 3px;
@@ -225,4 +229,10 @@ table.editable form input.cancel {
 }
 table.editable form input.del {
 	background-color: #f99;
+}
+
+div.filter {
+	float: left;
+	margin-right: 30px;
+	margin-bottom: 20px;
 }

@@ -17,4 +17,12 @@ class Dase_DBO_Language extends Dase_DBO_Autogen_Language
 				'language_subgroup' => '',
 		);	
 		
+		public function setLanguageOtherNames($value)
+		{
+				//assume $value is a string
+				$lot = new Dase_DBO_LanguageOtherName($this->db);
+				$lot->language_id = $this->id;
+				$lot->name = $value;
+				$lot->insert();
+		}
 }

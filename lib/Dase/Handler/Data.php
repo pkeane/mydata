@@ -4,6 +4,7 @@ class Dase_Handler_Data extends Dase_Handler
 {
 		public $resource_map = array(
 				'{table}/list' => 'list',
+				'{table}/{id}' => 'item',
 				'{table}/{id}/rowdata' => 'rowdata',
 				'{table}/{id}/{att}' => 'value',
 				'{table}/{id}/link/{att}/{att_id}' => 'link',
@@ -285,6 +286,28 @@ class Dase_Handler_Data extends Dase_Handler
 						$r->renderResponse($t->fetch($template_file));
 				} else {
 						$r->renderResponse($t->fetch('list.tpl'));
+				}
+		}
+
+		public function getItem($r) 
+		{
+				$table = rtrim($r->get('table'),'s');
+				$class = 'Dase_DBO_'.Dase_Util::camelize($table);
+				if (!class_exists($class)) {
+						$r->renderError(404);
+				}
+				$item = new $class($this->db);
+				$item->load($r->get('id'));
+				$item->inflate();
+				$t = new Dase_Template($r);
+				$t->assign('table',$table);
+				$t->assign('title',ucwords(str_replace('_',' ',$table).' '.$item->name));
+				$t->assign('item',$item);
+				$template_file = $table.'.tpl';
+				if ($t->template_exists($template_file)) {
+						$r->renderResponse($t->fetch($template_file));
+				} else {
+						$r->renderResponse($t->fetch('item.tpl'));
 				}
 		}
 }

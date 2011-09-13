@@ -100,7 +100,10 @@ class Dase_DBO implements IteratorAggregate
 			}
 			foreach ($this->getMembers()  as $k => $mem) {
 					if (is_array($mem)) {
-							$this->attributes[$k] = 'many';
+							//allows us to specify att type in class
+							if (!isset($this->attributes[$k]) || !$this->attributes[$k]) {
+									$this->attributes[$k] = 'many';
+							}
 							$table = rtrim($k,'s');
 							$class = Dase_DBO::getDBOClass($table);
 							$obj = new $class($this->db);

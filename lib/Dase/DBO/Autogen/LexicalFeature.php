@@ -9,11 +9,11 @@ require_once 'Dase/DBO.php';
  * 
  */
 
-class Dase_DBO_Autogen_LanguageFamily extends Dase_DBO 
+class Dase_DBO_Autogen_LexicalFeature extends Dase_DBO 
 {
 	public function __construct($db,$assoc = false) 
 	{
-		parent::__construct($db,'language_family', array('name','case_study_area_id'));
+		parent::__construct($db,'lexical_feature', array('english_headword','spanish_headword','portuguese_headword','french_headword','semantic_field_id','part_of_speech','bib_source','bib_source_pages'));
 		if ($assoc) {
 			foreach ( $assoc as $key => $value) {
 				$this->$key = $value;
